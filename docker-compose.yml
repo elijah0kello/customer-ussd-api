@@ -6,21 +6,21 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "${TNM_PORT}:${TNM_PORT}"
+      - "${PORT}:${PORT}"
     volumes:
       - .:/app
       - /app/node_modules
     env_file:
-      - .env
+      - .env.tnm
 
   airtel-customer-ussd-api:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "${AIRTEL_PORT}:${AIRTEL_PORT}"
+      - "${PORT}:${PORT}"
     volumes:
       - .:/app
       - /app/node_modules
     env_file:
-      - .env
+      - .env.airtel
