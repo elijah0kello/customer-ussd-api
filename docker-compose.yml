@@ -1,12 +1,24 @@
 version: '3.8'
 
 services:
-  customer-ussd-api:
+  tnm-customer-ussd-api:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "${PORT}:${PORT}"
+      - "${TNM_PORT}:${TNM_PORT}"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+
+  airtel-customer-ussd-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${AIRTEL_PORT}:${AIRTEL_PORT}"
     volumes:
       - .:/app
       - /app/node_modules
