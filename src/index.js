@@ -58,7 +58,7 @@ menu.state('buyAirtime.amount', {
         // use menu.val to access user input value
         var amount = Number(menu.val);
         buyAirtime(menu.args.phoneNumber, amount).then((res)=>{
-            menu.end('Airtime bought successfully.');
+            menu.end('Airtime of '+ amount +' bought successfully.');
         });
     }
 });
