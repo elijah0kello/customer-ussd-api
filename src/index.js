@@ -23,12 +23,96 @@ menu.startState({
         // use menu.con() to send response without terminating session      
         menu.con('Welcome. Choose option:' +
             '\n1. Show Balance' +
-            '\n2. Buy Airtime');
+            '\n2. Buy Airtime' + 
+            '\n3. COMESA Payment' +
+            '\n4. My Account' +
+            '\n5. My Phone Number' + 
+            '\n6. Pay Bill');
     },
     // next object links to next state based on user input
     next: {
         '1': 'showBalance',
-        '2': 'buyAirtime'
+        '2': 'buyAirtime',
+        '3': 'comesaPayment'
+    }
+});
+
+menu.state('comesaPayment', {
+    run: () => {
+        menu.con('Comesa Payment Services'+
+            '\n1. Send Money'
+        );
+    },
+    next: {
+        '1': 'sendMoney'
+    }
+});
+
+menu.state('sendMoney', {
+    run: () => {
+        menu.con('Enter Account/Phone Number');
+    },
+    next: {
+        '*\\d+': 'selectCountry'
+    }
+});
+
+menu.state('selectCountry', {
+    run: () => {
+        menu.con('Select a country'+
+            '\n1. Malawi' + 
+            '\n2. Zambia'
+        );
+    },
+    next: {
+        '1': 'enterAmount',
+        '2': 'enterAmount'
+    }
+});
+
+menu.state('enterAmount',{
+    run: () => {
+        menu.con('Enter Amount')
+    },
+    next: {
+        '*\\d+': 'enterRemarks'
+    }
+});
+
+menu.state('enterRemarks', {
+    run: () => {
+        menu.con('Enter Remarks')
+    },
+    next: {
+        '*[a-zA-Z]+': 'confirmDetails'
+    }
+});
+
+menu.state('confirmDetails', {
+    run : () => {
+        // perform POST /send-money
+        menu.con('You are sending Chikondi Banda 300 MWK. 50 ZMW will be debited from your account subject to your providers fees' +
+            '\n1. Proceed' + 
+            '\n2. Abort'
+        );
+    },
+    next: {
+        '1': 'proceedSendMoney',
+        '2': 'abortSendMoney'
+    }
+});
+
+menu.state('proceedSendMoney', {
+    run: () => {
+        // PUT /send-money/{id}
+        menu.end("Transaction in progress")
+    },
+});
+
+menu.state('abortSendMoney', {
+    run: () => {
+        // PUT /send-money/{id}
+        menu.end("Transaction aborted");
     }
 });
 
@@ -69,75 +153,6 @@ app.post('/', (req, res)=>{
     menu.run(req.body, ussdResult => {
         res.send(ussdResult);
     });
-});
-
-
-app.post('/ussd', (req, res) => {
-    // Read the variables sent via POST from our API
-    const {
-        sessionId,
-        serviceCode,
-        phoneNumber,
-        text,
-    } = req.body;
-
-    let response = '';
-
-
-    if (text == '') {
-        // This is the first request. Note how we start the response with CON
-        response = `CON What would you like to check
-        1. My account
-        2. My phone number
-        3. Withdraw Cash
-        4. Pay Bill
-        5. Payments 
-        6. School Fees
-        7. Financial Services
-        8 COMESA Payment`;
-    } else if ( text == '1') {
-        // Business logic for first level response
-        response = `CON Choose account information you want to view
-        1. Account number`;
-    } else if ( text == '2') {
-        // Business logic for first level response
-        // This is a terminal request. Note how we start the response with END
-        response = `END Your phone number is ${phoneNumber}`;
-    }else if(text == '8') {
-        // COMESA Payment
-        response = `CON COMESA Payment Services
-        1. Send Money`
-
-    }else if(text == '8*1'){
-        // Send Money
-        response = `CON Enter Account / Phone Number`
-    }else if (text == '8*1*1'){
-        response = `CON Select Country 
-        1. Malawi
-        2. Zambia
-        `;
-    }else if (text == '8*1*1*1'){
-        response = `CON Enter Amount`
-    }else if (text == '8*1*1*1*1'){
-        response = `CON Enter Remarks`
-    }else if (text == '8*1*1*1*1*1'){
-        response = `CON 
-        You are sending Chikondi Banda 300 MWK. 50 ZMW will be debited from your account.
-        1. Proceed
-        2. Abort`
-    }else if (text == '8*1*1*1*1*1*1'){
-        response = `END Transaction in progress`
-    }
-    else if ( text == '1*1') {
-        // This is a second level response where the user selected 1 in the first instance
-        const accountNumber = 'ACC100101';
-        // This is a terminal request. Note how we start the response with END
-        response = `END Your account number is ${accountNumber}`;
-    }
-
-    // Send the response back to the API
-    res.set('Content-Type: text/plain');
-    res.send(response);
 });
 
 app.listen(port, () => {
