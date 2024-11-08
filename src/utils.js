@@ -1,9 +1,9 @@
-export const fetchBalance = async (phoneNumber) => {
+const fetchBalance = async (phoneNumber) => {
     // Example API call or mock response
     return await someService.getBalance(phoneNumber); // Replace with your logic
 };
 
-export const buyAirtime = async (phoneNumber, amount) => {
+const buyAirtime = async (phoneNumber, amount) => {
     try {
         // Example of making an API request or simulating the airtime purchase
         // Replace the following with actual logic (e.g., an HTTP request to a payment service)
@@ -28,3 +28,4 @@ export const buyAirtime = async (phoneNumber, amount) => {
     }
 };
 
+module.exports = {buyAirtime,fetchBalance}
