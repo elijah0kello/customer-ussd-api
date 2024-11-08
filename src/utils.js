@@ -1,6 +1,6 @@
 const fetchBalance = async (phoneNumber) => {
     // Example API call or mock response
-    return await someService.getBalance(phoneNumber); // Replace with your logic
+    return "2000"; // Replace with your logic
 };
 
 const buyAirtime = async (phoneNumber, amount) => {
