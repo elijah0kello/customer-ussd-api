@@ -113,7 +113,7 @@ menu.state('confirmDetails', {
 menu.state('proceedSendMoney', {
     run: () => {
         // PUT /send-money/{id}
-        console.log(`Session Data => ${getSession(menu.args.sessionId)}`);
+        console.log(`Session Data => ${JSON.stringify(getSession(menu.args.sessionId))}`);
         menu.end("Transaction in progress")
     },
 });
@@ -121,7 +121,7 @@ menu.state('proceedSendMoney', {
 menu.state('abortSendMoney', {
     run: () => {
         // PUT /send-money/{id}
-        console.log(`Session Data => ${getSession(menu.args.sessionId)}`);
+        console.log(`Session Data => ${JSON.stringify(getSession(menu.args.sessionId))}`);
         menu.end("Transaction aborted");
     }
 });
