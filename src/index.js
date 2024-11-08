@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const {fetchBalance, buyAirtime} = require("./utils")
+const {fetchBalance, buyAirtime, sessionMap, addSession, updateSession, getCountryName, getSession} = require("./utils")
 
 const app = express();
 const port = process.env.PORT
@@ -59,6 +59,8 @@ menu.state('sendMoney', {
 
 menu.state('selectCountry', {
     run: () => {
+        // store account_number
+        updateSession(menu.args.sessionId,{accountNumber: menu.val});
         menu.con('Select a country'+
             '\n1. Malawi' + 
             '\n2. Zambia'
@@ -72,6 +74,8 @@ menu.state('selectCountry', {
 
 menu.state('enterAmount',{
     run: () => {
+        // store country
+        updateSession(menu.args.sessionId,{country: getCountryName(Number(menu.val))});
         menu.con('Enter Amount')
     },
     next: {
@@ -81,6 +85,8 @@ menu.state('enterAmount',{
 
 menu.state('enterRemarks', {
     run: () => {
+        // store amount
+        updateSession(menu.args.sessionId,{amount: menu.val});
         menu.con('Enter Remarks')
     },
     next: {
@@ -90,10 +96,12 @@ menu.state('enterRemarks', {
 
 menu.state('confirmDetails', {
     run : () => {
+        //store remarks
+        updateSession(menu.args.sessionId,{remarks: menu.val});
         // perform POST /send-money
         menu.con('You are sending Chikondi Banda 300 MWK. 50 ZMW will be debited from your account subject to your providers fees' +
             '\n1. Proceed' + 
-            '\n2. Abort'
+            '\n2. Abort' 
         );
     },
     next: {
@@ -105,6 +113,7 @@ menu.state('confirmDetails', {
 menu.state('proceedSendMoney', {
     run: () => {
         // PUT /send-money/{id}
+        console.log(`Session Data => ${getSession(menu.args.sessionId)}`);
         menu.end("Transaction in progress")
     },
 });
@@ -112,6 +121,7 @@ menu.state('proceedSendMoney', {
 menu.state('abortSendMoney', {
     run: () => {
         // PUT /send-money/{id}
+        console.log(`Session Data => ${getSession(menu.args.sessionId)}`);
         menu.end("Transaction aborted");
     }
 });
